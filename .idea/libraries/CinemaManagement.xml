@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="CinemaManagement">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/dist/CinemaManagement.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
