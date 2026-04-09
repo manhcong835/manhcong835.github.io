@@ -26,10 +26,15 @@
       --radius-lg: 20px;
       --radius-md: 14px;
       --max-width: 1200px;
+      --mouse-x: 50%;
+      --mouse-y: 20%;
+      --cursor-x: 50vw;
+      --cursor-y: 30vh;
     }
 
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
+
     body {
       margin: 0;
       font-family: Inter, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -37,8 +42,10 @@
       background:
         radial-gradient(circle at top left, rgba(37, 99, 235, 0.32), transparent 28%),
         radial-gradient(circle at top right, rgba(52, 211, 153, 0.18), transparent 22%),
+        radial-gradient(circle at var(--mouse-x) var(--mouse-y), rgba(96, 165, 250, 0.08), transparent 20%),
         linear-gradient(180deg, #09101d 0%, #07111f 40%, #08131f 100%);
       min-height: 100vh;
+      overflow-x: hidden;
     }
 
     body::before,
@@ -65,6 +72,23 @@
       bottom: -160px;
       right: -100px;
       background: rgba(16, 185, 129, 0.18);
+    }
+
+    .cursor-glow {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 560px;
+      height: 560px;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+      transform: translate3d(calc(var(--cursor-x) - 50%), calc(var(--cursor-y) - 50%), 0);
+      background:
+        radial-gradient(circle, rgba(96, 165, 250, 0.18) 0%, rgba(96, 165, 250, 0.08) 28%, rgba(52, 211, 153, 0.05) 42%, transparent 68%);
+      filter: blur(14px);
+      opacity: 0.8;
+      transition: opacity 0.25s ease;
     }
 
     a { color: inherit; text-decoration: none; }
@@ -117,6 +141,14 @@
       font-size: 0.95rem;
     }
 
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
     .nav {
       display: flex;
       align-items: center;
@@ -139,6 +171,36 @@
       background: rgba(96, 165, 250, 0.12);
     }
 
+    .lang-switch {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      background: rgba(255, 255, 255, 0.04);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+    }
+
+    .lang-btn {
+      min-width: 54px;
+      min-height: 38px;
+      padding: 0 14px;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--muted-strong);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      transition: 0.2s ease;
+    }
+
+    .lang-btn.active,
+    .lang-btn:hover {
+      color: #fff;
+      background: linear-gradient(135deg, rgba(96, 165, 250, 0.92), rgba(37, 99, 235, 0.92));
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.22);
+    }
+
     .hero {
       padding: 64px 0 38px;
     }
@@ -156,6 +218,12 @@
       box-shadow: var(--shadow);
       border-radius: var(--radius-xl);
       backdrop-filter: blur(20px);
+    }
+
+    .interactive-card {
+      transform-style: preserve-3d;
+      will-change: transform;
+      transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
     }
 
     .hero-card {
@@ -404,6 +472,7 @@
       display: grid;
       gap: 14px;
       margin-top: 18px;
+      padding: 0;
     }
 
     .feature-list li,
@@ -472,12 +541,10 @@
       border-radius: 24px;
       background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
       border: 1px solid rgba(148, 163, 184, 0.14);
-      transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
       overflow: hidden;
     }
 
     .doc-card:hover {
-      transform: translateY(-4px);
       border-color: rgba(96, 165, 250, 0.28);
       box-shadow: 0 20px 40px rgba(2, 8, 23, 0.28);
     }
@@ -562,10 +629,22 @@
       flex-wrap: wrap;
     }
 
-    .button-ghost {
+    .button-ghost,
+    .button-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       min-height: 42px;
       padding: 0 16px;
       border-radius: 999px;
+      line-height: 1;
+      white-space: nowrap;
+      text-decoration: none;
+      vertical-align: middle;
+      box-sizing: border-box;
+    }
+
+    .button-ghost {
       color: var(--text);
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid rgba(148, 163, 184, 0.14);
@@ -573,9 +652,6 @@
     }
 
     .button-link {
-      min-height: 42px;
-      padding: 0 16px;
-      border-radius: 999px;
       color: #fff;
       background: linear-gradient(135deg, rgba(96, 165, 250, 0.88), rgba(37, 99, 235, 0.9));
       font-weight: 700;
@@ -733,6 +809,24 @@
       margin-top: 14px;
     }
 
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .cursor-glow,
+      .interactive-card,
+      .button,
+      .button-ghost,
+      .button-link,
+      .filter-chip,
+      .lang-btn {
+        transition: none !important;
+      }
+    }
+
+    @media (hover: none), (pointer: coarse) {
+      .cursor-glow { display: none; }
+      .interactive-card { transform: none !important; }
+    }
+
     @media (max-width: 1080px) {
       .hero-grid,
       .featured,
@@ -754,6 +848,11 @@
         min-height: 72px;
         align-items: flex-start;
         padding: 14px 0;
+      }
+
+      .topbar-actions {
+        width: 100%;
+        justify-content: space-between;
       }
 
       .nav {
@@ -790,6 +889,8 @@
   </style>
 </head>
 <body>
+  <div class="cursor-glow" aria-hidden="true"></div>
+
   <!--
     GitHub Pages-ready single file.
     Suggested structure:
@@ -814,62 +915,68 @@
           <span class="brand-mark">BA</span>
           <span>Nguyễn Công Mạnh</span>
         </a>
-        <nav class="nav">
-          <a href="#featured-project">Featured Project</a>
-          <a href="#deliverables">Deliverables</a>
-          <a href="#workflow">Workflow</a>
-          <a href="#contact">Contact</a>
-        </nav>
+        <div class="topbar-actions">
+          <nav class="nav">
+            <a href="#featured-project" data-i18n="nav_featured">Featured Project</a>
+            <a href="#deliverables" data-i18n="nav_deliverables">Deliverables</a>
+            <a href="#workflow" data-i18n="nav_workflow">Workflow</a>
+            <a href="#contact" data-i18n="nav_contact">Contact</a>
+          </nav>
+          <div class="lang-switch" aria-label="Language switcher">
+            <button class="lang-btn active" type="button" data-lang="en">EN</button>
+            <button class="lang-btn" type="button" data-lang="vi">VI</button>
+          </div>
+        </div>
       </div>
     </header>
 
     <main id="top">
       <section class="hero">
         <div class="container hero-grid">
-          <article class="glass hero-card">
-            <div class="eyebrow">Business Analyst Portfolio</div>
-            <h1>Turning analysis into structured, review-ready deliverables.</h1>
-            <p class="lead">
+          <article class="glass hero-card interactive-card">
+            <div class="eyebrow" data-i18n="hero_eyebrow">Business Analyst Portfolio</div>
+            <h1 data-i18n="hero_title">Turning analysis into structured, review-ready deliverables.</h1>
+            <p class="lead" data-i18n="hero_copy">
               I am an Information Systems student building a Business Analyst portfolio focused on requirement analysis,
               business process modeling, and documentation. This portfolio is designed to present BRD, SRS, User Stories,
               UML, BPMN, ERD, and SQL validation artifacts in a way that recruiters, mentors, and project stakeholders can review quickly.
             </p>
             <div class="hero-actions">
-              <a class="button button-primary" href="#deliverables">Explore Deliverables</a>
-              <a class="button button-secondary" href="#contact">Get in Touch</a>
+              <a class="button button-primary" href="#deliverables" data-i18n="hero_cta_primary">Explore Deliverables</a>
+              <a class="button button-secondary" href="#contact" data-i18n="hero_cta_secondary">Get in Touch</a>
             </div>
           </article>
 
-          <aside class="glass hero-panel">
-            <div class="mini-profile">
+          <aside class="glass hero-panel interactive-card">
+            <div class="mini-profile interactive-card">
               <div class="avatar">M.C</div>
               <div>
-                <p>Portfolio Owner</p>
+                <p data-i18n="profile_label">Portfolio Owner</p>
                 <h3>Nguyễn Công Mạnh</h3>
-                <small>Business Analyst Intern Candidate</small>
+                <small data-i18n="profile_role">Business Analyst Intern Candidate</small>
               </div>
             </div>
 
             <div class="stat-grid">
-              <div class="stat-card">
-                <div class="stat-label">Primary Focus</div>
-                <div class="stat-value">BA Documentation</div>
-                <div class="stat-subtext">BRD, SRS, User Story, Acceptance Criteria, UML, BPMN, and ERD.</div>
+              <div class="stat-card interactive-card">
+                <div class="stat-label" data-i18n="stat_focus_label">Primary Focus</div>
+                <div class="stat-value" data-i18n="stat_focus_value">BA Documentation</div>
+                <div class="stat-subtext" data-i18n="stat_focus_copy">BRD, SRS, User Story, Acceptance Criteria, UML, BPMN, and ERD.</div>
               </div>
-              <div class="stat-card">
-                <div class="stat-label">Project Showcase</div>
-                <div class="stat-value">Cinema Management System</div>
-                <div class="stat-subtext">Featured academic project with end-to-end analysis artifacts.</div>
+              <div class="stat-card interactive-card">
+                <div class="stat-label" data-i18n="stat_project_label">Project Showcase</div>
+                <div class="stat-value" data-i18n="stat_project_value">Cinema Management System</div>
+                <div class="stat-subtext" data-i18n="stat_project_copy">Featured academic project with end-to-end analysis artifacts.</div>
               </div>
-              <div class="stat-card">
-                <div class="stat-label">Education</div>
-                <div class="stat-value">Information Systems</div>
-                <div class="stat-subtext">Hanoi University of Industry • GPA 3.38</div>
+              <div class="stat-card interactive-card">
+                <div class="stat-label" data-i18n="stat_education_label">Education</div>
+                <div class="stat-value" data-i18n="stat_education_value">Information Systems</div>
+                <div class="stat-subtext" data-i18n="stat_education_copy">Hanoi University of Industry • GPA 3.38</div>
               </div>
-              <div class="stat-card">
-                <div class="stat-label">Tools</div>
-                <div class="stat-value">Draw.io · Figma · Jira</div>
-                <div class="stat-subtext">Supported by SQL, database fundamentals, and analysis modeling skills.</div>
+              <div class="stat-card interactive-card">
+                <div class="stat-label" data-i18n="stat_tools_label">Tools</div>
+                <div class="stat-value" data-i18n="stat_tools_value">Draw.io · Figma · Jira</div>
+                <div class="stat-subtext" data-i18n="stat_tools_copy">Supported by SQL, database fundamentals, and analysis modeling skills.</div>
               </div>
             </div>
           </aside>
@@ -880,9 +987,9 @@
         <div class="container">
           <div class="section-head">
             <div>
-              <div class="section-kicker">Featured Work</div>
-              <h2 class="section-title">Cinema Management System</h2>
-              <p class="section-copy">
+              <div class="section-kicker" data-i18n="featured_kicker">Featured Work</div>
+              <h2 class="section-title" data-i18n="featured_title">Cinema Management System</h2>
+              <p class="section-copy" data-i18n="featured_copy">
                 A business analysis project for a cinema management system that supports movie scheduling, ticket booking,
                 seat management, and payment processing. The portfolio below organizes the project artifacts into a clear review journey,
                 from scope definition and requirements to process design, data structure, and validation support.
@@ -890,30 +997,30 @@
             </div>
           </div>
 
-          <div class="glass featured">
-            <div class="overview-card">
-              <div class="section-kicker">Project Summary</div>
-              <h3 style="font-size: 1.5rem; margin-bottom: 12px; letter-spacing: -0.03em;">Business Analyst Deliverables, structured for hiring review.</h3>
+          <div class="glass featured interactive-card">
+            <div class="overview-card interactive-card">
+              <div class="section-kicker" data-i18n="summary_kicker">Project Summary</div>
+              <h3 style="font-size: 1.5rem; margin-bottom: 12px; letter-spacing: -0.03em;" data-i18n="summary_title">Business Analyst Deliverables, structured for hiring review.</h3>
               <div class="project-meta">
-                <span class="pill">Role: Business Analyst</span>
-                <span class="pill">Timeline: 09/2025 – 11/2025</span>
-                <span class="pill">Domain: Cinema Operations</span>
+                <span class="pill" data-i18n="pill_role">Role: Business Analyst</span>
+                <span class="pill" data-i18n="pill_timeline">Timeline: 09/2025 – 11/2025</span>
+                <span class="pill" data-i18n="pill_domain">Domain: Cinema Operations</span>
               </div>
               <ul class="feature-list">
-                <li>Captured and organized requirements from both Admin and Customer perspectives.</li>
-                <li>Translated needs into User Stories and Acceptance Criteria to support development and testing.</li>
-                <li>Produced UML and BPMN diagrams to clarify functional flows and process logic.</li>
-                <li>Designed the ERD and supported database alignment through basic SQL validation queries.</li>
+                <li data-i18n="summary_li_1">Captured and organized requirements from both Admin and Customer perspectives.</li>
+                <li data-i18n="summary_li_2">Translated needs into User Stories and Acceptance Criteria to support development and testing.</li>
+                <li data-i18n="summary_li_3">Produced UML and BPMN diagrams to clarify functional flows and process logic.</li>
+                <li data-i18n="summary_li_4">Designed the ERD and supported database alignment through basic SQL validation queries.</li>
               </ul>
             </div>
-            <div class="impact-card">
-              <div class="section-kicker">Why This Format Works</div>
-              <h3 style="font-size: 1.5rem; margin-bottom: 12px; letter-spacing: -0.03em;">A recruiter-friendly portfolio that shows evidence, not just claims.</h3>
+            <div class="impact-card interactive-card">
+              <div class="section-kicker" data-i18n="impact_kicker">Why This Format Works</div>
+              <h3 style="font-size: 1.5rem; margin-bottom: 12px; letter-spacing: -0.03em;" data-i18n="impact_title">A recruiter-friendly portfolio that shows evidence, not just claims.</h3>
               <ul class="impact-list">
-                <li>Each artifact card explains what the document contains and why it matters in the analysis process.</li>
-                <li>Deliverables are grouped by category so reviewers can jump directly to requirements, modeling, data, or validation.</li>
-                <li>Preview support allows documents to be opened inside the portfolio for a smoother review experience on GitHub Pages.</li>
-                <li>The structure is easy to extend as you add more projects, research reports, or internship case studies.</li>
+                <li data-i18n="impact_li_1">Each artifact card explains what the document contains and why it matters in the analysis process.</li>
+                <li data-i18n="impact_li_2">Deliverables are grouped by category so reviewers can jump directly to requirements, modeling, data, or validation.</li>
+                <li data-i18n="impact_li_3">Preview support allows documents to be opened inside the portfolio for a smoother review experience on GitHub Pages.</li>
+                <li data-i18n="impact_li_4">The structure is easy to extend as you add more projects, research reports, or internship case studies.</li>
               </ul>
             </div>
           </div>
@@ -924,9 +1031,9 @@
         <div class="container">
           <div class="section-head">
             <div>
-              <div class="section-kicker">Project Evidence</div>
-              <h2 class="section-title">Deliverables & Documentation</h2>
-              <p class="section-copy">
+              <div class="section-kicker" data-i18n="deliverables_kicker">Project Evidence</div>
+              <h2 class="section-title" data-i18n="deliverables_title">Deliverables & Documentation</h2>
+              <p class="section-copy" data-i18n="deliverables_copy">
                 This section is built for direct artifact review. Add your PDFs to the matching folder paths, then the cards below will serve as a polished portfolio index for BRD, SRS, User Stories, diagrams, and database design files.
               </p>
             </div>
@@ -935,10 +1042,7 @@
           <div class="chip-row" id="filterBar"></div>
           <div class="doc-grid" id="documentGrid"></div>
 
-          <div class="callout">
-            <strong>Portfolio tip:</strong> keep each artifact concise, labeled, and review-ready. For intern applications,
-            6–10 strong documents with consistent naming usually create a better impression than uploading too many files with overlapping content.
-          </div>
+          <div class="callout"><strong data-i18n="callout_label">Portfolio tip:</strong> <span data-i18n="callout_copy">keep each artifact concise, labeled, and review-ready. For intern applications, 6–10 strong documents with consistent naming usually create a better impression than uploading too many files with overlapping content.</span></div>
         </div>
       </section>
 
@@ -946,34 +1050,34 @@
         <div class="container">
           <div class="section-head">
             <div>
-              <div class="section-kicker">Working Approach</div>
-              <h2 class="section-title">How the analysis work is organized</h2>
-              <p class="section-copy">
+              <div class="section-kicker" data-i18n="workflow_kicker">Working Approach</div>
+              <h2 class="section-title" data-i18n="workflow_title">How the analysis work is organized</h2>
+              <p class="section-copy" data-i18n="workflow_copy">
                 A clean portfolio is stronger when it also shows the logic behind the artifacts. This process section helps reviewers understand how requirements move from discovery into structured documentation.
               </p>
             </div>
           </div>
 
           <div class="process-grid">
-            <article class="process-card">
+            <article class="process-card interactive-card">
               <div class="process-step">01</div>
-              <h3>Requirement Discovery</h3>
-              <p>Identify stakeholders, clarify project goals, define scope, and capture functional and non-functional requirements.</p>
+              <h3 data-i18n="step_1_title">Requirement Discovery</h3>
+              <p data-i18n="step_1_copy">Identify stakeholders, clarify project goals, define scope, and capture functional and non-functional requirements.</p>
             </article>
-            <article class="process-card">
+            <article class="process-card interactive-card">
               <div class="process-step">02</div>
-              <h3>Documentation</h3>
-              <p>Translate findings into BRD or SRS sections, User Stories, Acceptance Criteria, and prioritized feature lists.</p>
+              <h3 data-i18n="step_2_title">Documentation</h3>
+              <p data-i18n="step_2_copy">Translate findings into BRD or SRS sections, User Stories, Acceptance Criteria, and prioritized feature lists.</p>
             </article>
-            <article class="process-card">
+            <article class="process-card interactive-card">
               <div class="process-step">03</div>
-              <h3>Process & System Modeling</h3>
-              <p>Visualize flows through Use Case Diagrams, Activity Diagrams, and BPMN to reduce ambiguity and support collaboration.</p>
+              <h3 data-i18n="step_3_title">Process & System Modeling</h3>
+              <p data-i18n="step_3_copy">Visualize flows through Use Case Diagrams, Activity Diagrams, and BPMN to reduce ambiguity and support collaboration.</p>
             </article>
-            <article class="process-card">
+            <article class="process-card interactive-card">
               <div class="process-step">04</div>
-              <h3>Data & Validation</h3>
-              <p>Design ERD structures, define key entities, and use SQL validation queries to support data consistency and requirement checking.</p>
+              <h3 data-i18n="step_4_title">Data & Validation</h3>
+              <p data-i18n="step_4_copy">Design ERD structures, define key entities, and use SQL validation queries to support data consistency and requirement checking.</p>
             </article>
           </div>
         </div>
@@ -981,31 +1085,31 @@
 
       <section id="contact">
         <div class="container">
-          <div class="glass contact-card">
-            <div class="contact-panel">
-              <div class="section-kicker">Contact</div>
-              <h2 class="section-title">Open to BA internship opportunities</h2>
-              <p class="section-copy">
+          <div class="glass contact-card interactive-card">
+            <div class="contact-panel interactive-card">
+              <div class="section-kicker" data-i18n="contact_kicker">Contact</div>
+              <h2 class="section-title" data-i18n="contact_title">Open to BA internship opportunities</h2>
+              <p class="section-copy" data-i18n="contact_copy">
                 If you are reviewing this portfolio for an internship, project collaboration, or interview screening,
                 feel free to reach out. The portfolio structure can also be expanded with additional academic projects,
                 research work, or business analysis case studies.
               </p>
               <ul class="contact-list">
-                <li><span>Email: <a href="mailto:congmanh835@gmail.com">congmanh835@gmail.com</a></span></li>
-                <li><span>Phone: <a href="tel:0398679042">0398 679 042</a></span></li>
-                <li><span>GitHub: <a href="https://github.com/manhcong835" target="_blank" rel="noreferrer">github.com/manhcong835</a></span></li>
-                <li><span>Location: Tây Hồ, Hà Nội</span></li>
+                <li><span><span data-i18n="contact_email">Email:</span> <a href="mailto:congmanh835@gmail.com">congmanh835@gmail.com</a></span></li>
+                <li><span><span data-i18n="contact_phone">Phone:</span> <a href="tel:0398679042">0398 679 042</a></span></li>
+                <li><span><span data-i18n="contact_github">GitHub:</span> <a href="https://github.com/manhcong835" target="_blank" rel="noreferrer">github.com/manhcong835</a></span></li>
+                <li><span><span data-i18n="contact_location">Location:</span> <span data-i18n="contact_location_value">Tây Hồ, Hà Nội</span></span></li>
               </ul>
             </div>
-            <div class="contact-panel">
-              <div class="section-kicker">Recommended Next Additions</div>
+            <div class="contact-panel interactive-card">
+              <div class="section-kicker" data-i18n="next_kicker">Recommended Next Additions</div>
               <ul class="process-list">
-                <li>Add a second project to show range across another domain, such as travel booking, retail, or ERP.</li>
-                <li>Upload a short BRD or SRS summary PDF with a clean table of contents for faster review.</li>
-                <li>Include one file that combines User Stories and Acceptance Criteria in Given/When/Then format.</li>
-                <li>Replace any temporary links with final public PDFs before sharing the portfolio with recruiters.</li>
+                <li data-i18n="next_li_1">Add a second project to show range across another domain, such as travel booking, retail, or ERP.</li>
+                <li data-i18n="next_li_2">Upload a short BRD or SRS summary PDF with a clean table of contents for faster review.</li>
+                <li data-i18n="next_li_3">Include one file that combines User Stories and Acceptance Criteria in Given/When/Then format.</li>
+                <li data-i18n="next_li_4">Replace any temporary links with final public PDFs before sharing the portfolio with recruiters.</li>
               </ul>
-              <p class="helper">
+              <p class="helper" data-i18n="next_helper">
                 You can duplicate this portfolio structure later for more projects by adding another project section and a new document group.
               </p>
             </div>
@@ -1016,22 +1120,22 @@
 
     <footer class="footer">
       <div class="container footer-inner">
-        <span>© 2026 Nguyễn Công Mạnh • Business Analyst Portfolio</span>
-        <span>Designed for GitHub Pages deployment</span>
+        <span data-i18n="footer_left">© 2026 Nguyễn Công Mạnh • Business Analyst Portfolio</span>
+        <span data-i18n="footer_right">Designed for GitHub Pages deployment</span>
       </div>
     </footer>
   </div>
 
   <div class="modal" id="previewModal" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog interactive-card">
       <div class="modal-head">
         <div>
           <div class="modal-title" id="modalTitle">Document Preview</div>
           <div class="helper" id="modalPath" style="margin-top: 6px;"></div>
         </div>
         <div class="modal-actions">
-          <a class="button-link" id="openExternal" href="#" target="_blank" rel="noreferrer">Open PDF</a>
-          <button class="close-btn" id="closeModal" type="button">Close</button>
+          <a class="button-link" id="openExternal" href="#" target="_blank" rel="noreferrer" data-i18n="modal_open">Open PDF</a>
+          <button class="close-btn" id="closeModal" type="button" data-i18n="modal_close">Close</button>
         </div>
       </div>
       <iframe class="modal-frame" id="modalFrame" src="about:blank" title="Document Preview"></iframe>
@@ -1039,107 +1143,337 @@
   </div>
 
   <script>
+    const i18n = {
+      en: {
+        page_title: "Nguyễn Công Mạnh | Business Analyst Portfolio",
+        page_description: "Business Analyst portfolio showcasing BRD, SRS, User Stories, BPMN, UML, ERD, and SQL validation artifacts.",
+        nav_featured: "Featured Project",
+        nav_deliverables: "Deliverables",
+        nav_workflow: "Workflow",
+        nav_contact: "Contact",
+        hero_eyebrow: "Business Analyst Portfolio",
+        hero_title: "Turning analysis into structured, review-ready deliverables.",
+        hero_copy: "I am an Information Systems student building a Business Analyst portfolio focused on requirement analysis, business process modeling, and documentation. This portfolio is designed to present BRD, SRS, User Stories, UML, BPMN, ERD, and SQL validation artifacts in a way that recruiters, mentors, and project stakeholders can review quickly.",
+        hero_cta_primary: "Explore Deliverables",
+        hero_cta_secondary: "Get in Touch",
+        profile_label: "Portfolio Owner",
+        profile_role: "Business Analyst Intern Candidate",
+        stat_focus_label: "Primary Focus",
+        stat_focus_value: "BA Documentation",
+        stat_focus_copy: "BRD, SRS, User Story, Acceptance Criteria, UML, BPMN, and ERD.",
+        stat_project_label: "Project Showcase",
+        stat_project_value: "Cinema Management System",
+        stat_project_copy: "Featured academic project with end-to-end analysis artifacts.",
+        stat_education_label: "Education",
+        stat_education_value: "Information Systems",
+        stat_education_copy: "Hanoi University of Industry • GPA 3.38",
+        stat_tools_label: "Tools",
+        stat_tools_value: "Draw.io · Figma · Jira",
+        stat_tools_copy: "Supported by SQL, database fundamentals, and analysis modeling skills.",
+        featured_kicker: "Featured Work",
+        featured_title: "Cinema Management System",
+        featured_copy: "A business analysis project for a cinema management system that supports movie scheduling, ticket booking, seat management, and payment processing. The portfolio below organizes the project artifacts into a clear review journey, from scope definition and requirements to process design, data structure, and validation support.",
+        summary_kicker: "Project Summary",
+        summary_title: "Business Analyst Deliverables, structured for hiring review.",
+        pill_role: "Role: Business Analyst",
+        pill_timeline: "Timeline: 09/2025 – 11/2025",
+        pill_domain: "Domain: Cinema Operations",
+        summary_li_1: "Captured and organized requirements from both Admin and Customer perspectives.",
+        summary_li_2: "Translated needs into User Stories and Acceptance Criteria to support development and testing.",
+        summary_li_3: "Produced UML and BPMN diagrams to clarify functional flows and process logic.",
+        summary_li_4: "Designed the ERD and supported database alignment through basic SQL validation queries.",
+        impact_kicker: "Why This Format Works",
+        impact_title: "A recruiter-friendly portfolio that shows evidence, not just claims.",
+        impact_li_1: "Each artifact card explains what the document contains and why it matters in the analysis process.",
+        impact_li_2: "Deliverables are grouped by category so reviewers can jump directly to requirements, modeling, data, or validation.",
+        impact_li_3: "Preview support allows documents to be opened inside the portfolio for a smoother review experience on GitHub Pages.",
+        impact_li_4: "The structure is easy to extend as you add more projects, research reports, or internship case studies.",
+        deliverables_kicker: "Project Evidence",
+        deliverables_title: "Deliverables & Documentation",
+        deliverables_copy: "This section is built for direct artifact review. Add your PDFs to the matching folder paths, then the cards below will serve as a polished portfolio index for BRD, SRS, User Stories, diagrams, and database design files.",
+        callout_label: "Portfolio tip:",
+        callout_copy: "keep each artifact concise, labeled, and review-ready. For intern applications, 6–10 strong documents with consistent naming usually create a better impression than uploading too many files with overlapping content.",
+        workflow_kicker: "Working Approach",
+        workflow_title: "How the analysis work is organized",
+        workflow_copy: "A clean portfolio is stronger when it also shows the logic behind the artifacts. This process section helps reviewers understand how requirements move from discovery into structured documentation.",
+        step_1_title: "Requirement Discovery",
+        step_1_copy: "Identify stakeholders, clarify project goals, define scope, and capture functional and non-functional requirements.",
+        step_2_title: "Documentation",
+        step_2_copy: "Translate findings into BRD or SRS sections, User Stories, Acceptance Criteria, and prioritized feature lists.",
+        step_3_title: "Process & System Modeling",
+        step_3_copy: "Visualize flows through Use Case Diagrams, Activity Diagrams, and BPMN to reduce ambiguity and support collaboration.",
+        step_4_title: "Data & Validation",
+        step_4_copy: "Design ERD structures, define key entities, and use SQL validation queries to support data consistency and requirement checking.",
+        contact_kicker: "Contact",
+        contact_title: "Open to BA internship opportunities",
+        contact_copy: "If you are reviewing this portfolio for an internship, project collaboration, or interview screening, feel free to reach out. The portfolio structure can also be expanded with additional academic projects, research work, or business analysis case studies.",
+        contact_email: "Email:",
+        contact_phone: "Phone:",
+        contact_github: "GitHub:",
+        contact_location: "Location:",
+        contact_location_value: "Tây Hồ, Hà Nội",
+        next_kicker: "Recommended Next Additions",
+        next_li_1: "Add a second project to show range across another domain, such as travel booking, retail, or ERP.",
+        next_li_2: "Upload a short BRD or SRS summary PDF with a clean table of contents for faster review.",
+        next_li_3: "Include one file that combines User Stories and Acceptance Criteria in Given/When/Then format.",
+        next_li_4: "Replace any temporary links with final public PDFs before sharing the portfolio with recruiters.",
+        next_helper: "You can duplicate this portfolio structure later for more projects by adding another project section and a new document group.",
+        footer_left: "© 2026 Nguyễn Công Mạnh • Business Analyst Portfolio",
+        footer_right: "Designed for GitHub Pages deployment",
+        modal_preview: "Document Preview",
+        modal_open: "Open PDF",
+        modal_close: "Close",
+        preview_button: "Preview",
+        open_button: "Open File"
+      },
+      vi: {
+        page_title: "Nguyễn Công Mạnh | Portfolio Business Analyst",
+        page_description: "Portfolio Business Analyst trình bày BRD, SRS, User Story, BPMN, UML, ERD và các tài liệu kiểm tra SQL.",
+        nav_featured: "Dự án nổi bật",
+        nav_deliverables: "Tài liệu",
+        nav_workflow: "Quy trình",
+        nav_contact: "Liên hệ",
+        hero_eyebrow: "Portfolio Business Analyst",
+        hero_title: "Biến phân tích thành bộ tài liệu rõ ràng, sẵn sàng để đánh giá.",
+        hero_copy: "Tôi là sinh viên ngành Hệ thống thông tin đang xây dựng portfolio Business Analyst tập trung vào phân tích yêu cầu, mô hình hóa quy trình nghiệp vụ và tài liệu hóa hệ thống. Portfolio này được thiết kế để trình bày BRD, SRS, User Story, UML, BPMN, ERD và các tài liệu kiểm tra SQL theo cách giúp nhà tuyển dụng, mentor và stakeholder có thể xem nhanh và rõ ràng.",
+        hero_cta_primary: "Xem tài liệu",
+        hero_cta_secondary: "Liên hệ",
+        profile_label: "Chủ sở hữu portfolio",
+        profile_role: "Ứng viên Business Analyst Intern",
+        stat_focus_label: "Trọng tâm chính",
+        stat_focus_value: "Tài liệu BA",
+        stat_focus_copy: "BRD, SRS, User Story, Acceptance Criteria, UML, BPMN và ERD.",
+        stat_project_label: "Dự án trưng bày",
+        stat_project_value: "Cinema Management System",
+        stat_project_copy: "Dự án học thuật nổi bật với bộ tài liệu phân tích đầu-cuối.",
+        stat_education_label: "Học vấn",
+        stat_education_value: "Hệ thống thông tin",
+        stat_education_copy: "Đại học Công nghiệp Hà Nội • GPA 3.38",
+        stat_tools_label: "Công cụ",
+        stat_tools_value: "Draw.io · Figma · Jira",
+        stat_tools_copy: "Hỗ trợ bởi SQL, nền tảng cơ sở dữ liệu và kỹ năng mô hình hóa phân tích.",
+        featured_kicker: "Dự án nổi bật",
+        featured_title: "Cinema Management System",
+        featured_copy: "Đây là dự án phân tích nghiệp vụ cho hệ thống quản lý rạp chiếu phim, hỗ trợ lập lịch phim, đặt vé, quản lý ghế và xử lý thanh toán. Portfolio bên dưới sắp xếp các artifact theo một hành trình đánh giá rõ ràng, từ phạm vi và yêu cầu đến quy trình, cấu trúc dữ liệu và phần kiểm tra xác nhận.",
+        summary_kicker: "Tóm tắt dự án",
+        summary_title: "Bộ deliverable BA được trình bày rõ ràng để phục vụ tuyển dụng.",
+        pill_role: "Vai trò: Business Analyst",
+        pill_timeline: "Thời gian: 09/2025 – 11/2025",
+        pill_domain: "Lĩnh vực: Vận hành rạp phim",
+        summary_li_1: "Thu thập và sắp xếp yêu cầu từ cả góc nhìn Admin và Customer.",
+        summary_li_2: "Chuyển nhu cầu thành User Story và Acceptance Criteria để hỗ trợ phát triển và kiểm thử.",
+        summary_li_3: "Xây dựng sơ đồ UML và BPMN để làm rõ luồng chức năng và logic quy trình.",
+        summary_li_4: "Thiết kế ERD và hỗ trợ đồng bộ cơ sở dữ liệu bằng các truy vấn SQL kiểm tra cơ bản.",
+        impact_kicker: "Vì sao cách trình bày này hiệu quả",
+        impact_title: "Một portfolio thân thiện với recruiter, thể hiện bằng chứng thay vì chỉ mô tả.",
+        impact_li_1: "Mỗi thẻ tài liệu đều giải thích tài liệu đó chứa gì và có ý nghĩa gì trong quá trình phân tích.",
+        impact_li_2: "Deliverable được nhóm theo danh mục để người xem có thể đi thẳng tới phần yêu cầu, mô hình, dữ liệu hoặc kiểm tra.",
+        impact_li_3: "Chức năng preview cho phép mở tài liệu trực tiếp trong portfolio, tạo trải nghiệm xem mượt hơn trên GitHub Pages.",
+        impact_li_4: "Cấu trúc này rất dễ mở rộng khi bạn bổ sung thêm dự án, báo cáo nghiên cứu hoặc case study thực tập.",
+        deliverables_kicker: "Bằng chứng dự án",
+        deliverables_title: "Deliverable & tài liệu",
+        deliverables_copy: "Phần này được xây để xem artifact trực tiếp. Chỉ cần thêm file PDF vào đúng đường dẫn thư mục, các thẻ bên dưới sẽ trở thành một trang chỉ mục portfolio gọn gàng cho BRD, SRS, User Story, sơ đồ và tài liệu thiết kế dữ liệu.",
+        callout_label: "Mẹo portfolio:",
+        callout_copy: "hãy giữ mỗi artifact ngắn gọn, gắn nhãn rõ ràng và sẵn sàng để reviewer đọc. Với vị trí intern, 6–10 tài liệu tốt và đặt tên nhất quán thường tạo ấn tượng tốt hơn là tải lên quá nhiều file bị trùng nội dung.",
+        workflow_kicker: "Cách làm việc",
+        workflow_title: "Cách tổ chức công việc phân tích",
+        workflow_copy: "Một portfolio đẹp sẽ mạnh hơn khi cho thấy cả logic tạo ra các artifact. Phần quy trình này giúp người xem hiểu yêu cầu được chuyển từ giai đoạn khám phá sang tài liệu hóa có cấu trúc như thế nào.",
+        step_1_title: "Khám phá yêu cầu",
+        step_1_copy: "Xác định stakeholder, làm rõ mục tiêu dự án, phạm vi và thu thập yêu cầu chức năng cũng như phi chức năng.",
+        step_2_title: "Tài liệu hóa",
+        step_2_copy: "Chuyển các phát hiện thành các phần BRD hoặc SRS, User Story, Acceptance Criteria và danh sách tính năng ưu tiên.",
+        step_3_title: "Mô hình quy trình & hệ thống",
+        step_3_copy: "Trực quan hóa luồng bằng Use Case Diagram, Activity Diagram và BPMN để giảm mơ hồ và hỗ trợ cộng tác.",
+        step_4_title: "Dữ liệu & xác nhận",
+        step_4_copy: "Thiết kế ERD, xác định các thực thể chính và dùng truy vấn SQL để hỗ trợ kiểm tra tính nhất quán dữ liệu và yêu cầu.",
+        contact_kicker: "Liên hệ",
+        contact_title: "Sẵn sàng cho cơ hội thực tập BA",
+        contact_copy: "Nếu bạn đang xem portfolio này để phục vụ tuyển thực tập, hợp tác dự án hoặc sàng lọc phỏng vấn, hãy liên hệ với tôi. Cấu trúc này cũng có thể mở rộng thêm cho các dự án học thuật khác, nghiên cứu hoặc case study phân tích nghiệp vụ.",
+        contact_email: "Email:",
+        contact_phone: "Số điện thoại:",
+        contact_github: "GitHub:",
+        contact_location: "Địa điểm:",
+        contact_location_value: "Tây Hồ, Hà Nội",
+        next_kicker: "Gợi ý bổ sung tiếp theo",
+        next_li_1: "Thêm dự án thứ hai để thể hiện phạm vi ở lĩnh vực khác như đặt tour, bán lẻ hoặc ERP.",
+        next_li_2: "Tải lên bản tóm tắt BRD hoặc SRS ngắn có mục lục rõ ràng để reviewer xem nhanh hơn.",
+        next_li_3: "Thêm một file kết hợp User Story và Acceptance Criteria theo format Given/When/Then.",
+        next_li_4: "Thay mọi liên kết tạm bằng PDF công khai hoàn chỉnh trước khi gửi portfolio cho nhà tuyển dụng.",
+        next_helper: "Sau này bạn có thể nhân bản cấu trúc này cho nhiều dự án khác bằng cách thêm một section mới và một nhóm tài liệu mới.",
+        footer_left: "© 2026 Nguyễn Công Mạnh • Portfolio Business Analyst",
+        footer_right: "Thiết kế để triển khai trên GitHub Pages",
+        modal_preview: "Xem trước tài liệu",
+        modal_open: "Mở PDF",
+        modal_close: "Đóng",
+        preview_button: "Xem trước",
+        open_button: "Mở file"
+      }
+    };
+
     const portfolioDocuments = [
       {
-        title: "Business Requirements Document",
+        title: { en: "Business Requirements Document", vi: "Tài liệu yêu cầu nghiệp vụ" },
         shortCode: "BRD",
-        type: "Requirements",
+        type: { en: "Requirements", vi: "Yêu cầu" },
         category: "requirements",
-        description: "Defines project objectives, scope, business context, stakeholders, functional requirements, non-functional requirements, and business rules.",
-        tags: ["Scope", "Stakeholders", "Business Rules"],
+        description: {
+          en: "Defines project objectives, scope, business context, stakeholders, functional requirements, non-functional requirements, and business rules.",
+          vi: "Xác định mục tiêu dự án, phạm vi, bối cảnh nghiệp vụ, stakeholder, yêu cầu chức năng, yêu cầu phi chức năng và business rules."
+        },
+        tags: {
+          en: ["Scope", "Stakeholders", "Business Rules"],
+          vi: ["Phạm vi", "Stakeholder", "Luật nghiệp vụ"]
+        },
         href: "./documents/cinema-management-system/BRD.pdf"
       },
       {
-        title: "Software Requirements Specification",
+        title: { en: "Software Requirements Specification", vi: "Đặc tả yêu cầu phần mềm" },
         shortCode: "SRS",
-        type: "Requirements",
+        type: { en: "Requirements", vi: "Yêu cầu" },
         category: "requirements",
-        description: "Provides a more structured software-focused requirement view, including system behavior, user roles, constraints, and major functional modules.",
-        tags: ["System Behavior", "Modules", "Constraints"],
+        description: {
+          en: "Provides a more structured software-focused requirement view, including system behavior, user roles, constraints, and major functional modules.",
+          vi: "Trình bày yêu cầu theo góc nhìn phần mềm có cấu trúc hơn, gồm hành vi hệ thống, vai trò người dùng, ràng buộc và các module chức năng chính."
+        },
+        tags: {
+          en: ["System Behavior", "Modules", "Constraints"],
+          vi: ["Hành vi hệ thống", "Module", "Ràng buộc"]
+        },
         href: "./documents/cinema-management-system/SRS.pdf"
       },
       {
-        title: "User Stories",
+        title: { en: "User Stories", vi: "User Story" },
         shortCode: "US",
-        type: "Requirements",
+        type: { en: "Requirements", vi: "Yêu cầu" },
         category: "requirements",
-        description: "Breaks down user needs into clear stories from Admin and Customer perspectives to guide implementation and team understanding.",
-        tags: ["Admin", "Customer", "Prioritization"],
+        description: {
+          en: "Breaks down user needs into clear stories from Admin and Customer perspectives to guide implementation and team understanding.",
+          vi: "Phân rã nhu cầu người dùng thành các story rõ ràng từ góc nhìn Admin và Customer để hỗ trợ triển khai và giúp team hiểu hệ thống."
+        },
+        tags: {
+          en: ["Admin", "Customer", "Prioritization"],
+          vi: ["Admin", "Customer", "Ưu tiên"]
+        },
         href: "./documents/cinema-management-system/User-Stories.pdf"
       },
       {
-        title: "Acceptance Criteria",
+        title: { en: "Acceptance Criteria", vi: "Acceptance Criteria" },
         shortCode: "AC",
-        type: "Requirements",
+        type: { en: "Requirements", vi: "Yêu cầu" },
         category: "requirements",
-        description: "Lists testable completion conditions for key user stories, ideally using Given/When/Then or similarly structured validation rules.",
-        tags: ["Validation", "Given/When/Then", "Testing Support"],
+        description: {
+          en: "Lists testable completion conditions for key user stories, ideally using Given/When/Then or similarly structured validation rules.",
+          vi: "Liệt kê các điều kiện hoàn thành có thể kiểm thử cho các user story quan trọng, lý tưởng theo format Given/When/Then hoặc dạng xác nhận tương tự."
+        },
+        tags: {
+          en: ["Validation", "Given/When/Then", "Testing Support"],
+          vi: ["Xác nhận", "Given/When/Then", "Hỗ trợ kiểm thử"]
+        },
         href: "./documents/cinema-management-system/Acceptance-Criteria.pdf"
       },
       {
-        title: "Use Case Diagram",
+        title: { en: "Use Case Diagram", vi: "Sơ đồ Use Case" },
         shortCode: "UML",
-        type: "Modeling",
+        type: { en: "Modeling", vi: "Mô hình hóa" },
         category: "modeling",
-        description: "Shows the interaction between user roles and the system to visualize functional boundaries and clarify actor responsibilities.",
-        tags: ["Actors", "Use Cases", "System Scope"],
+        description: {
+          en: "Shows the interaction between user roles and the system to visualize functional boundaries and clarify actor responsibilities.",
+          vi: "Thể hiện sự tương tác giữa các vai trò người dùng và hệ thống để trực quan hóa ranh giới chức năng và làm rõ trách nhiệm của actor."
+        },
+        tags: {
+          en: ["Actors", "Use Cases", "System Scope"],
+          vi: ["Actor", "Use Case", "Phạm vi hệ thống"]
+        },
         href: "./documents/cinema-management-system/Use-Case-Diagram.pdf"
       },
       {
-        title: "Activity Diagram",
+        title: { en: "Activity Diagram", vi: "Sơ đồ Activity" },
         shortCode: "ACT",
-        type: "Modeling",
+        type: { en: "Modeling", vi: "Mô hình hóa" },
         category: "modeling",
-        description: "Maps the step-by-step operational logic of a selected flow such as booking, cancellation, or payment confirmation.",
-        tags: ["Workflow", "Decision Points", "Flow Logic"],
+        description: {
+          en: "Maps the step-by-step operational logic of a selected flow such as booking, cancellation, or payment confirmation.",
+          vi: "Mô tả logic vận hành theo từng bước cho một luồng cụ thể như đặt vé, hủy vé hoặc xác nhận thanh toán."
+        },
+        tags: {
+          en: ["Workflow", "Decision Points", "Flow Logic"],
+          vi: ["Workflow", "Điểm quyết định", "Logic luồng"]
+        },
         href: "./documents/cinema-management-system/Activity-Diagram.pdf"
       },
       {
-        title: "BPMN Booking Flow",
+        title: { en: "BPMN Booking Flow", vi: "Luồng đặt vé BPMN" },
         shortCode: "BPMN",
-        type: "Modeling",
+        type: { en: "Modeling", vi: "Mô hình hóa" },
         category: "modeling",
-        description: "Visualizes the business process with swimlanes and process responsibilities to explain how the booking flow is executed end-to-end.",
-        tags: ["Process Modeling", "Swimlanes", "Booking Flow"],
+        description: {
+          en: "Visualizes the business process with swimlanes and process responsibilities to explain how the booking flow is executed end-to-end.",
+          vi: "Trực quan hóa quy trình nghiệp vụ bằng swimlane và trách nhiệm từng bên để giải thích toàn bộ luồng đặt vé từ đầu đến cuối."
+        },
+        tags: {
+          en: ["Process Modeling", "Swimlanes", "Booking Flow"],
+          vi: ["Mô hình quy trình", "Swimlane", "Luồng đặt vé"]
+        },
         href: "./documents/cinema-management-system/BPMN-Booking-Flow.pdf"
       },
       {
-        title: "Entity Relationship Diagram",
+        title: { en: "Entity Relationship Diagram", vi: "Sơ đồ ERD" },
         shortCode: "ERD",
-        type: "Data Design",
+        type: { en: "Data Design", vi: "Thiết kế dữ liệu" },
         category: "data",
-        description: "Defines the major entities, relationships, and database logic supporting movies, showtimes, seats, bookings, users, and payments.",
-        tags: ["Entities", "Relationships", "Database Design"],
+        description: {
+          en: "Defines the major entities, relationships, and database logic supporting movies, showtimes, seats, bookings, users, and payments.",
+          vi: "Xác định các thực thể chính, mối quan hệ và logic cơ sở dữ liệu phục vụ phim, suất chiếu, ghế, booking, người dùng và thanh toán."
+        },
+        tags: {
+          en: ["Entities", "Relationships", "Database Design"],
+          vi: ["Thực thể", "Quan hệ", "Thiết kế CSDL"]
+        },
         href: "./documents/cinema-management-system/ERD.pdf"
       },
       {
-        title: "Data Dictionary",
+        title: { en: "Data Dictionary", vi: "Từ điển dữ liệu" },
         shortCode: "DATA",
-        type: "Data Design",
+        type: { en: "Data Design", vi: "Thiết kế dữ liệu" },
         category: "data",
-        description: "Documents the meaning of key fields, data types, and important table-level definitions to make the database structure easier to review.",
-        tags: ["Field Definitions", "Tables", "Data Types"],
+        description: {
+          en: "Documents the meaning of key fields, data types, and important table-level definitions to make the database structure easier to review.",
+          vi: "Mô tả ý nghĩa của các trường dữ liệu chính, kiểu dữ liệu và định nghĩa quan trọng ở mức bảng để cấu trúc cơ sở dữ liệu dễ xem hơn."
+        },
+        tags: {
+          en: ["Field Definitions", "Tables", "Data Types"],
+          vi: ["Định nghĩa trường", "Bảng", "Kiểu dữ liệu"]
+        },
         href: "./documents/cinema-management-system/Data-Dictionary.pdf"
       },
       {
-        title: "SQL Validation Samples",
+        title: { en: "SQL Validation Samples", vi: "Mẫu truy vấn SQL kiểm tra" },
         shortCode: "SQL",
-        type: "Validation",
+        type: { en: "Validation", vi: "Xác nhận" },
         category: "validation",
-        description: "Contains sample SQL queries used for data checking, requirement validation, and basic support during design or test preparation.",
-        tags: ["Queries", "Validation", "Data Checking"],
+        description: {
+          en: "Contains sample SQL queries used for data checking, requirement validation, and basic support during design or test preparation.",
+          vi: "Bao gồm các truy vấn SQL mẫu dùng để kiểm tra dữ liệu, xác nhận yêu cầu và hỗ trợ cơ bản trong giai đoạn thiết kế hoặc chuẩn bị kiểm thử."
+        },
+        tags: {
+          en: ["Queries", "Validation", "Data Checking"],
+          vi: ["Truy vấn", "Xác nhận", "Kiểm tra dữ liệu"]
+        },
         href: "./documents/cinema-management-system/SQL-Validation.pdf"
       }
     ];
 
     const filters = [
-      { key: "all", label: "All Deliverables" },
-      { key: "requirements", label: "Requirements" },
-      { key: "modeling", label: "Modeling" },
-      { key: "data", label: "Data Design" },
-      { key: "validation", label: "Validation" }
+      { key: "all", label: { en: "All Deliverables", vi: "Tất cả tài liệu" } },
+      { key: "requirements", label: { en: "Requirements", vi: "Yêu cầu" } },
+      { key: "modeling", label: { en: "Modeling", vi: "Mô hình hóa" } },
+      { key: "data", label: { en: "Data Design", vi: "Thiết kế dữ liệu" } },
+      { key: "validation", label: { en: "Validation", vi: "Xác nhận" } }
     ];
 
+    const root = document.documentElement;
+    const titleEl = document.querySelector("title");
+    const descriptionEl = document.querySelector('meta[name="description"]');
     const filterBar = document.getElementById("filterBar");
     const documentGrid = document.getElementById("documentGrid");
     const modal = document.getElementById("previewModal");
@@ -1148,20 +1482,50 @@
     const modalPath = document.getElementById("modalPath");
     const openExternal = document.getElementById("openExternal");
     const closeModal = document.getElementById("closeModal");
+    const langButtons = Array.from(document.querySelectorAll(".lang-btn"));
+    const navLinks = Array.from(document.querySelectorAll(".nav a"));
 
     let activeFilter = "all";
+    let currentLang = localStorage.getItem("portfolio-lang") || ((navigator.language || "en").toLowerCase().startsWith("vi") ? "vi" : "en");
+
+    function t(key) {
+      return i18n[currentLang][key] || i18n.en[key] || key;
+    }
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem("portfolio-lang", lang);
+      document.documentElement.lang = lang;
+      titleEl.textContent = t("page_title");
+      descriptionEl.setAttribute("content", t("page_description"));
+
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.dataset.i18n;
+        if (i18n[currentLang][key]) {
+          el.textContent = i18n[currentLang][key];
+        }
+      });
+
+      langButtons.forEach(btn => btn.classList.toggle("active", btn.dataset.lang === lang));
+
+      if (modal.classList.contains("open")) {
+        openExternal.textContent = t("modal_open");
+        closeModal.textContent = t("modal_close");
+      }
+
+      renderFilters();
+      renderDocuments();
+    }
 
     function renderFilters() {
       filterBar.innerHTML = filters
-        .map(
-          filter => `
-            <button
-              type="button"
-              class="filter-chip ${filter.key === activeFilter ? "active" : ""}"
-              data-filter="${filter.key}">
-              ${filter.label}
-            </button>`
-        )
+        .map(filter => `
+          <button
+            type="button"
+            class="filter-chip ${filter.key === activeFilter ? "active" : ""}"
+            data-filter="${filter.key}">
+            ${filter.label[currentLang]}
+          </button>`)
         .join("");
 
       filterBar.querySelectorAll(".filter-chip").forEach(button => {
@@ -1175,24 +1539,46 @@
 
     function documentCard(doc) {
       return `
-        <article class="doc-card" data-category="${doc.category}">
+        <article class="doc-card interactive-card" data-category="${doc.category}">
           <div class="doc-top">
             <div class="doc-icon">${doc.shortCode}</div>
-            <div class="doc-type">${doc.type}</div>
+            <div class="doc-type">${doc.type[currentLang]}</div>
           </div>
           <div>
-            <h3 class="doc-title">${doc.title}</h3>
-            <p class="doc-desc">${doc.description}</p>
+            <h3 class="doc-title">${doc.title[currentLang]}</h3>
+            <p class="doc-desc">${doc.description[currentLang]}</p>
           </div>
           <div class="tag-row">
-            ${doc.tags.map(tag => `<span class="tag">${tag}</span>`).join("")}
+            ${doc.tags[currentLang].map(tag => `<span class="tag">${tag}</span>`).join("")}
           </div>
           <div class="doc-actions">
-            <button class="button-ghost preview-button" type="button" data-title="${doc.title}" data-href="${doc.href}">Preview</button>
-            <a class="button-link" href="${doc.href}" target="_blank" rel="noreferrer">Open File</a>
+            <button class="button-ghost preview-button" type="button" data-title="${doc.title[currentLang]}" data-href="${doc.href}">${t("preview_button")}</button>
+            <a class="button-link" href="${doc.href}" target="_blank" rel="noreferrer">${t("open_button")}</a>
           </div>
         </article>
       `;
+    }
+
+    function attachTiltEffects(scope = document) {
+      if (window.matchMedia("(hover: none), (pointer: coarse)").matches) return;
+
+      scope.querySelectorAll(".interactive-card").forEach(card => {
+        if (card.dataset.tiltReady === "true") return;
+        card.dataset.tiltReady = "true";
+
+        card.addEventListener("mousemove", (event) => {
+          const rect = card.getBoundingClientRect();
+          const x = event.clientX - rect.left;
+          const y = event.clientY - rect.top;
+          const rx = ((y / rect.height) - 0.5) * -8;
+          const ry = ((x / rect.width) - 0.5) * 10;
+          card.style.transform = `perspective(1000px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-3px)`;
+        });
+
+        card.addEventListener("mouseleave", () => {
+          card.style.transform = "perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0)";
+        });
+      });
     }
 
     function renderDocuments() {
@@ -1201,14 +1587,17 @@
         : portfolioDocuments.filter(doc => doc.category === activeFilter);
 
       documentGrid.innerHTML = visible.map(documentCard).join("");
+      attachTiltEffects(documentGrid);
 
       documentGrid.querySelectorAll(".preview-button").forEach(button => {
         button.addEventListener("click", () => {
           const href = button.dataset.href;
-          modalTitle.textContent = button.dataset.title;
+          modalTitle.textContent = button.dataset.title || t("modal_preview");
           modalPath.textContent = href;
           modalFrame.src = href;
           openExternal.href = href;
+          openExternal.textContent = t("modal_open");
+          closeModal.textContent = t("modal_close");
           modal.classList.add("open");
           modal.setAttribute("aria-hidden", "false");
         });
@@ -1236,8 +1625,50 @@
       }
     });
 
-    renderFilters();
-    renderDocuments();
+    langButtons.forEach(btn => {
+      btn.addEventListener("click", () => setLanguage(btn.dataset.lang));
+    });
+
+    const sections = navLinks
+      .map(link => document.querySelector(link.getAttribute("href")))
+      .filter(Boolean);
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const id = `#${entry.target.id}`;
+        navLinks.forEach(link => link.classList.toggle("active", link.getAttribute("href") === id));
+      });
+    }, { threshold: 0.4 });
+
+    sections.forEach(section => observer.observe(section));
+
+    if (!window.matchMedia("(hover: none), (pointer: coarse)").matches) {
+      let targetX = window.innerWidth * 0.5;
+      let targetY = window.innerHeight * 0.25;
+      let currentX = targetX;
+      let currentY = targetY;
+
+      document.addEventListener("mousemove", (event) => {
+        targetX = event.clientX;
+        targetY = event.clientY;
+        root.style.setProperty("--mouse-x", `${event.clientX}px`);
+        root.style.setProperty("--mouse-y", `${event.clientY}px`);
+      });
+
+      function animateCursorGlow() {
+        currentX += (targetX - currentX) * 0.12;
+        currentY += (targetY - currentY) * 0.12;
+        root.style.setProperty("--cursor-x", `${currentX}px`);
+        root.style.setProperty("--cursor-y", `${currentY}px`);
+        requestAnimationFrame(animateCursorGlow);
+      }
+
+      animateCursorGlow();
+      attachTiltEffects(document);
+    }
+
+    setLanguage(currentLang);
   </script>
 </body>
 </html>
